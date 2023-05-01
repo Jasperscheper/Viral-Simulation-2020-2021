@@ -18,6 +18,7 @@
 #include <iostream>
 #include <emscripten.h>
 #include <math.h>
+#include <stdio.h>
 
 #include "RegularMovementStrategy.h"
 #include "LockdownMovementStrategy.h"
@@ -50,6 +51,24 @@ void Simulation::assign_strategies(){
             this->_subjects.at(i).setMovementStrategy(&lockdownMovementStrategy);
         }
     }
+}
+
+void Simulation::assign_groups() {
+    int group_size = this->_subjects.size() / 10;
+
+    std::vector<std::reference_wrapper<Subject>> tmp;
+
+    for(Subject& subject : this->_subjects) {
+        if(tmp.size() < group_size) {
+            tmp.emplace_back(subject);
+        } else {
+            this->_subjectGroups.emplace_back(SubjectGroup(tmp));
+            tmp.clear();
+            tmp.emplace_back(subject);
+        }
+    }
+
+    this->_subjectGroups.emplace_back(SubjectGroup(tmp));
 }
 
 void Simulation::run()
@@ -98,10 +117,25 @@ void Simulation::tick()
 
     int numberInfected = 0;
 
+    for(SubjectGroup& subjectGroup : _subjectGroups) {
+        subjectGroup.move(dt);
+        subjectGroup.increaseTimeAlive();
+
+        std::cout << subjectGroup.timeAlive() << std::endl;
+
+        // std::cout << subjectGroup.timeAlive() << std::endl;
+        if(subjectGroup.timeAlive() <= 300) {
+            subjectGroup.setMovementStrategy(&regularMovementStrategy);
+        } else if(subjectGroup.timeAlive() > 300 && subjectGroup.timeAlive() <= 400) {
+            subjectGroup.setMovementStrategy(&lockdownMovementStrategy); 
+        } else if( subjectGroup.timeAlive() > 400){
+            subjectGroup.generateTimeAlive();
+        }
+    }
+
     for(Subject& s : _subjects)
     {
-        s.move(dt);
-       
+
         if(s.infected())
         {
             numberInfected++;

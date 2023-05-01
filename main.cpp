@@ -58,6 +58,7 @@ int main() {
     }  
 
     s.assign_strategies();
+    s.assign_groups();
 
     s.run();
 }

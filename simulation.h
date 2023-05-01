@@ -21,6 +21,7 @@
 #include "subject.h"
 #include "canvas.h"
 #include "statistics_handler.h"
+#include "SubjectGroup.h"
 
 namespace corsim
 {
@@ -36,6 +37,7 @@ class Simulation
         Simulation(int width, int height, std::unique_ptr<Canvas> canvas, std::unique_ptr<StatisticsHandler> sh);
         void add_subject(Subject&& s);
         void assign_strategies();
+        void assign_groups();
         void run(); //This method starts the simulation but locks execution because theading is not supported in WASM
     private:
         void wall_collision(Subject& s);
@@ -44,6 +46,7 @@ class Simulation
         void tick();
         void draw_to_canvas();
 
+        std::vector<SubjectGroup> _subjectGroups;
         std::unique_ptr<Canvas> _canvas;
         std::vector<Subject> _subjects;
         std::unique_ptr<StatisticsHandler> _sh;
