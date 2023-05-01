@@ -88,6 +88,16 @@ double Subject::angle()
     return atan2(_dy,_dx);
 }
 
+void Subject::setMovementStrategy(MovementStrategy *movementStrategy)
+    {
+        this->_movementStrategy = movementStrategy;
+    }
+
+void Subject::move(double dt) {
+    this->set_x(this->_movementStrategy->runStrategy(this->x(), this->dx(), dt));
+    this->set_y(this->_movementStrategy->runStrategy(this->y(), this->dy(), dt));
+}
+
 double Subject::speed()
 {
     return sqrt(_dx * _dx + _dy * _dy);

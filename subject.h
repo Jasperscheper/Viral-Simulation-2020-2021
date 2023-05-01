@@ -16,6 +16,8 @@
 
 #pragma once 
 
+#include "MovementStrategy.h"
+
 namespace corsim
 {
     
@@ -40,10 +42,14 @@ class Subject
         void infect();
         double angle();
         double speed();
+        void move(double dt);
+        void setMovementStrategy(MovementStrategy *movementStrategy);
+       
     private:
         double _x = 0,_y = 0, _dx = 0, _dy = 0;
         bool _infected = false;
         int _radius = 0;
+        MovementStrategy *_movementStrategy;
 };
 
 };

@@ -19,8 +19,14 @@
 #include <emscripten.h>
 #include <math.h>
 
+#include "RegularMovementStrategy.h"
+#include "LockdownMovementStrategy.h"
+
 namespace corsim
 {
+
+corsim::RegularMovementStrategy regularMovementStrategy;
+corsim::LockdownMovementStrategy lockdownMovementStrategy;
 
 Simulation::Simulation(int width, int height, std::unique_ptr<Canvas> canvas, std::unique_ptr<StatisticsHandler> sh) : 
     _sim_width{width}, _sim_height{height}, _canvas{std::move(canvas)}, _sh{std::move(sh)} {}
@@ -28,6 +34,22 @@ Simulation::Simulation(int width, int height, std::unique_ptr<Canvas> canvas, st
 void Simulation::add_subject(Subject&& s)
 {
     this->_subjects.emplace_back(std::move(s));
+}
+
+void Simulation::assign_strategies(){
+
+    // 75% gets the regular strategy.
+    float split = 0.75;
+    int subject_count = this->_subjects.size();
+
+    for(int i=0; i < subject_count; i++){
+
+        if ( i < this->_subjects.size() * split) {
+            this->_subjects.at(i).setMovementStrategy(&regularMovementStrategy);
+        } else {
+            this->_subjects.at(i).setMovementStrategy(&lockdownMovementStrategy);
+        }
+    }
 }
 
 void Simulation::run()
@@ -78,9 +100,8 @@ void Simulation::tick()
 
     for(Subject& s : _subjects)
     {
-        s.set_x(s.x() + s.dx() * dt);
-        s.set_y(s.y() + s.dy() * dt);
-
+        s.move(dt);
+       
         if(s.infected())
         {
             numberInfected++;

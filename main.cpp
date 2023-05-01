@@ -57,5 +57,7 @@ int main() {
         s.add_subject(std::move(su));
     }  
 
+    s.assign_strategies();
+
     s.run();
 }

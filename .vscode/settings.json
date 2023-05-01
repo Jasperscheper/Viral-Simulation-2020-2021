@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "type_traits": "cpp",
+        "ios": "cpp",
+        "vector": "cpp"
+    }
+}

@@ -35,6 +35,7 @@ class Simulation
     public:
         Simulation(int width, int height, std::unique_ptr<Canvas> canvas, std::unique_ptr<StatisticsHandler> sh);
         void add_subject(Subject&& s);
+        void assign_strategies();
         void run(); //This method starts the simulation but locks execution because theading is not supported in WASM
     private:
         void wall_collision(Subject& s);
