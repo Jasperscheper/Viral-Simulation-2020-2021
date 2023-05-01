@@ -37,6 +37,7 @@ void Simulation::add_subject(Subject&& s)
     this->_subjects.emplace_back(std::move(s));
 }
 
+// function to assign initial strategies to the subjects
 void Simulation::assign_strategies(){
 
     // 75% gets the regular strategy.
@@ -53,6 +54,7 @@ void Simulation::assign_strategies(){
     }
 }
 
+// this function adds the subjects to a group
 void Simulation::assign_groups() {
     int group_size = this->_subjects.size() / 10;
 
@@ -118,16 +120,19 @@ void Simulation::tick()
     int numberInfected = 0;
 
     for(SubjectGroup& subjectGroup : _subjectGroups) {
+        
         subjectGroup.move(dt);
         subjectGroup.increaseTimeAlive();
 
         std::cout << subjectGroup.timeAlive() << std::endl;
 
-        // std::cout << subjectGroup.timeAlive() << std::endl;
+        // if the timealive is under 300, make the subjects move normally
         if(subjectGroup.timeAlive() <= 300) {
             subjectGroup.setMovementStrategy(&regularMovementStrategy);
+        // if the timealive is between 300 and 400, we should restrict the movement of the group.
         } else if(subjectGroup.timeAlive() > 300 && subjectGroup.timeAlive() <= 400) {
             subjectGroup.setMovementStrategy(&lockdownMovementStrategy); 
+        // if the timealive is above 400, generate a new timealive to have random movement strategy changes.
         } else if( subjectGroup.timeAlive() > 400){
             subjectGroup.generateTimeAlive();
         }
