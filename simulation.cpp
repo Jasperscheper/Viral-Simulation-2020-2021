@@ -70,7 +70,9 @@ void Simulation::assign_groups() {
         }
     }
 
-    this->_subjectGroups.emplace_back(SubjectGroup(tmp));
+    if (!tmp.empty()) {
+        this->_subjectGroups.emplace_back(SubjectGroup(tmp));
+    }
 }
 
 void Simulation::run()
